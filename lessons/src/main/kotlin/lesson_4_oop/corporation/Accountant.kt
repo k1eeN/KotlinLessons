@@ -8,8 +8,8 @@ class Accountant(
     age: Int
 ) : Worker(id, name, age, Position.ACCOUNTANT) {
 
-    val fileProductCard = File("product_cards.txt")
-    val fileWorkers = File("workers.txt")
+    private val fileProductCard = File("product_cards.txt")
+    private val fileWorkers = File("workers.txt")
 
     override fun work() {
         val operationCodes = OperationCode.entries
@@ -32,7 +32,7 @@ class Accountant(
         }
     }
 
-    fun registerNewEmployees() {
+    private fun registerNewEmployees() {
         val positions = Position.entries
         print("Choose position - ")
         for ((index, position) in positions.withIndex()) {
@@ -60,7 +60,7 @@ class Accountant(
         saveWorkerToFile(worker)
     }
 
-    fun fireAnEmployees() {
+    private fun fireAnEmployees() {
         print("Enter employee's id to fire: ")
         val id = readln().toInt()
         val employees = loadAllEmployees()
@@ -72,14 +72,14 @@ class Accountant(
         }
     }
 
-    fun showAllEmployees() {
+    private fun showAllEmployees() {
         val employees = loadAllEmployees()
         for (employee in employees) {
             employee.printInfo()
         }
     }
 
-    fun loadAllEmployees(): MutableList<Worker> {
+    private fun loadAllEmployees(): MutableList<Worker> {
         val employees = mutableListOf<Worker>()
 
         if (!fileWorkers.exists()) fileWorkers.createNewFile()
@@ -107,11 +107,12 @@ class Accountant(
         return employees
     }
 
-    fun saveWorkerToFile(worker: Worker) {
+    private fun saveWorkerToFile(worker: Worker) {
         fileWorkers.appendText("${worker.id}%${worker.name}%${worker.age}%${worker.position}\n")
     }
 
-    fun removeProductCard() {
+
+    private fun removeProductCard() {
         val cards: MutableList<ProductCard> = loadAllCards()
         print("Enter name of card for removing: ")
         val name = readln()
@@ -128,7 +129,7 @@ class Accountant(
 
     }
 
-    fun loadAllCards(): MutableList<ProductCard> {
+    private fun loadAllCards(): MutableList<ProductCard> {
         val cards: MutableList<ProductCard> = mutableListOf()
 
         if (!fileProductCard.exists()) fileProductCard.createNewFile()
@@ -167,14 +168,14 @@ class Accountant(
         return cards
     }
 
-    fun showAllItems() {
+    private fun showAllItems() {
         val cards = loadAllCards()
         for (card in cards) {
             card.printInfo()
         }
     }
 
-    fun saveProductCardToFile(productCard: ProductCard) {
+    private fun saveProductCardToFile(productCard: ProductCard) {
         fileProductCard.appendText("${productCard.name}%${productCard.brand}%${productCard.price}%")
         when (productCard) {
             is FoodCard -> {
@@ -198,7 +199,7 @@ class Accountant(
         fileProductCard.appendText("${productCard.productType}\n")
     }
 
-    fun registerNewItem() {
+    private fun registerNewItem() {
         val productTypes = ProductType.entries
         print("Enter the product type. ")
         for ((index, type) in productTypes.withIndex()) {

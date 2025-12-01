@@ -1,10 +1,10 @@
 package lesson_4_oop.profile
 
 class Person(
-    val name: String = "",
-    val age: Int = 0,
-    val height: Int = 0,
-    val weight: Int = 0
+    private val name: String,
+    private val age: Int,
+    private val height: Int,
+    private val weight: Int
 ) {
 
     fun printInfo() {
@@ -20,4 +20,6 @@ class Person(
             print("Running... ")
         }
     }
+
+
 }
