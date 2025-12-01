@@ -3,9 +3,10 @@ package lesson_4_oop.corporation
 import kotlin.random.Random
 
 class Consultant(
+    id: Int,
     name: String,
     age: Int = 0
-): Worker(name, age) {
+): Worker(id, name, age, Position.CONSULTANT) {
 
     override fun work() {
         serveCustomers()

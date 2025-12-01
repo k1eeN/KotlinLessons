@@ -1,9 +1,10 @@
 package lesson_4_oop.corporation
 
 class Director(
+    id: Int,
     name: String,
     age: Int
-) : Worker(name = name, age = age) {
+) : Worker(id, name, age, Position.DIRECTOR) {
 
     fun getConsultantToWork(consultant: Consultant) {
         val count = consultant.serveCustomers()

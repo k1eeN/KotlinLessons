@@ -1,9 +1,10 @@
 package lesson_4_oop.corporation
 
 class Assistant(
+    id: Int,
     name: String,
     age: Int = 0
-) : Worker(name = name, age = age) {
+) : Worker(id, name, age, Position.ASSISTANT) {
 
     override fun work() {
         println("I'm answering the phone now.")
