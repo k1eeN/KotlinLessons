@@ -1,15 +1,13 @@
 package lesson_4_oop.corporation
 
-open class Worker(
+abstract class Worker(
     val id: Int,
     val name: String,
     val age: Int = 0,
     val position: Position
 ) {
 
-    open fun work() {
-        println("I'm working now.")
-    }
+    abstract fun work()
 
     open fun printInfo() {
         println("Id: $id Name: $name Age: $age Position: $position")

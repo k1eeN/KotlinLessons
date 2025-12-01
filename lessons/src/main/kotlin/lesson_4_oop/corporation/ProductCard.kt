@@ -1,13 +1,11 @@
 package lesson_4_oop.corporation
 
-open class ProductCard(
+abstract class ProductCard(
     val name: String,
     val brand: String,
     val price: Int,
     val productType: ProductType
 ) {
 
-    open fun printInfo() {
-        println("Name: $name Brand: $brand Price: $price Product Type: ${productType.title}")
-    }
+    abstract fun printInfo()
 }
