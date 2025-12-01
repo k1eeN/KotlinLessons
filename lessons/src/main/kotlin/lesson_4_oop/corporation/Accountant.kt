@@ -6,10 +6,18 @@ class Accountant(
     id: Int,
     name: String,
     age: Int
-) : Worker(id, name, age, Position.ACCOUNTANT) {
+) : Worker(id, name, age, Position.ACCOUNTANT), Cleaner, Supplier {
 
     private val fileProductCard = File("product_cards.txt")
     private val fileWorkers = File("workers.txt")
+
+    override fun clean() {
+        println("Accountant: I'm cleaning workplace...")
+    }
+
+    override fun buyThings() {
+        println("Accountant: I'm buying things...")
+    }
 
     override fun work() {
         val operationCodes = OperationCode.entries
@@ -79,7 +87,7 @@ class Accountant(
         }
     }
 
-    private fun loadAllEmployees(): MutableList<Worker> {
+    fun loadAllEmployees(): MutableList<Worker> {
         val employees = mutableListOf<Worker>()
 
         if (!fileWorkers.exists()) fileWorkers.createNewFile()

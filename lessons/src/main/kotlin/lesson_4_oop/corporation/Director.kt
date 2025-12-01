@@ -4,7 +4,11 @@ class Director(
     id: Int,
     name: String,
     age: Int
-) : Worker(id, name, age, Position.DIRECTOR) {
+) : Worker(id, name, age, Position.DIRECTOR), Supplier {
+
+    override fun buyThings() {
+        println("Director: I'm buying things...")
+    }
 
     fun getConsultantToWork(consultant: Consultant) {
         val count = consultant.serveCustomers()
