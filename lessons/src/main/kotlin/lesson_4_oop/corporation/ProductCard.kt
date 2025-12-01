@@ -7,5 +7,7 @@ abstract class ProductCard(
     val productType: ProductType
 ) {
 
-    abstract fun printInfo()
+    fun printInfo() {
+        println(this)
+    }
 }
