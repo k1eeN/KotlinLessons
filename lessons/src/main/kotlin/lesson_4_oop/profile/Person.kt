@@ -2,9 +2,13 @@ package lesson_4_oop.profile
 
 class Person(
     private val name: String,
+    var lastName: String,
     private val height: Int,
     private val weight: Int
 ) {
+
+    val fullName: String
+        get() = "$name $lastName"
 
     var age: Int = 0
         set(value) {

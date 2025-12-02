@@ -3,8 +3,15 @@ package lesson_4_oop.corporation
 class Assistant(
     id: Int,
     name: String,
-    age: Int = 0
-) : Worker(id, name, age, Position.ASSISTANT), Cleaner, Supplier {
+    age: Int = 0,
+    salary: Int
+) : Worker(
+    id,
+    name,
+    age,
+    salary,
+    Position.ASSISTANT
+), Cleaner, Supplier {
 
     override fun clean() {
         println("Assistant: I'm cleaning workplace...")

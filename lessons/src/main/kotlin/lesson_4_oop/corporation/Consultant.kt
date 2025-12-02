@@ -5,8 +5,15 @@ import kotlin.random.Random
 class Consultant(
     id: Int,
     name: String,
-    age: Int = 0
-): Worker(id, name, age, Position.CONSULTANT), Cleaner {
+    age: Int = 0,
+    salary: Int
+) : Worker(
+    id,
+    name,
+    age,
+    salary,
+    Position.CONSULTANT
+), Cleaner {
 
     override fun clean() {
         println("Consultant: I'm cleaning workplace...")
