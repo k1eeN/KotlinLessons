@@ -7,8 +7,39 @@ class ProductCardRepository {
 
     private val fileProductCard = File("product_cards.txt")
 
+    val productCards = loadAllCards()
 
-    fun loadAllCards(): MutableList<ProductCard> {
+    fun registerNewItem(productCard: ProductCard) = productCards.add(productCard)
+
+    fun saveChanges() {
+        val content = StringBuilder()
+        for (productCard in productCards) {
+            content.append("${productCard.name}%${productCard.brand}%${productCard.price}%")
+            when (productCard) {
+                is FoodCard -> {
+                    print("Enter the caloric: ")
+                    val caloric = productCard.caloric
+                    content.append("$caloric%")
+                }
+
+                is ApplianceCard -> {
+                    print("Enter the wattage: ")
+                    val wattage = productCard.wattage
+                    content.append("$wattage%")
+                }
+
+                is ShoeCard -> {
+                    print("Enter the size: ")
+                    val size = productCard.size
+                    content.append("$size%")
+                }
+            }
+            content.append("${productCard.productType}\n")
+        }
+        fileProductCard.writeText(content.toString())
+    }
+
+    private fun loadAllCards(): MutableList<ProductCard> {
         val cards: MutableList<ProductCard> = mutableListOf()
 
         if (!fileProductCard.exists()) fileProductCard.createNewFile()
@@ -47,44 +78,12 @@ class ProductCardRepository {
         return cards
     }
 
-
     fun removeProductCard(name: String) {
-        val cards: MutableList<ProductCard> = loadAllCards()
-        for (card in cards) {
+        for (card in productCards) {
             if (card.name == name) {
-                cards.remove(card)
+                productCards.remove(card)
                 break
             }
         }
-        fileProductCard.writeText("")
-        for (card in cards) {
-            saveProductCardToFile(card)
-        }
-    }
-
-    fun registerNewItem(productCard: ProductCard) = saveProductCardToFile(productCard)
-
-    private fun saveProductCardToFile(productCard: ProductCard) {
-        fileProductCard.appendText("${productCard.name}%${productCard.brand}%${productCard.price}%")
-        when (productCard) {
-            is FoodCard -> {
-                print("Enter the caloric: ")
-                val caloric = productCard.caloric
-                fileProductCard.appendText("$caloric%")
-            }
-
-            is ApplianceCard -> {
-                print("Enter the wattage: ")
-                val wattage = productCard.wattage
-                fileProductCard.appendText("$wattage%")
-            }
-
-            is ShoeCard -> {
-                print("Enter the size: ")
-                val size = productCard.size
-                fileProductCard.appendText("$size%")
-            }
-        }
-        fileProductCard.appendText("${productCard.productType}\n")
     }
 }
