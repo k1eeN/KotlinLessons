@@ -36,7 +36,23 @@ class Accountant(
                 OperationCode.REGISTER_NEW_EMPLOYEES -> registerNewEmployees()
                 OperationCode.FIRE_EMPLOYEES -> fireAnEmployees()
                 OperationCode.SHOW_ALL_EMPLOYEES -> showAllEmployees()
+                OperationCode.CHANGE_SALARY -> changeSalary()
             }
+        }
+    }
+
+    private fun changeSalary() {
+        print("Enter employee's id to change salary: ")
+        val id = readln().toInt()
+        print("Enter new salary: ")
+        val salary = readln().toInt()
+        val employees = loadAllEmployees()
+        fileWorkers.writeText("")
+        for (employee in employees) {
+            if (employee.id == id) {
+                employee.salary = salary
+            }
+            saveWorkerToFile(employee)
         }
     }
 
@@ -59,12 +75,15 @@ class Accountant(
         val name = readln()
         print("Enter age: ")
         val age = readln().toInt()
+        print("Enter salary: ")
+        val salary = readln().toInt()
         val worker = when (position) {
             Position.DIRECTOR -> Director(id, name, age)
             Position.ACCOUNTANT -> Accountant(id, name, age)
             Position.ASSISTANT -> Assistant(id, name, age)
             Position.CONSULTANT -> Consultant(id, name, age)
         }
+        worker.salary = salary
         saveWorkerToFile(worker)
     }
 
@@ -102,6 +121,7 @@ class Accountant(
             val id = properties[0].toInt()
             val name = properties[1]
             val age = properties[2].toInt()
+            val salary = properties[3].toInt()
             val positionAsText = properties.last()
             val position = Position.valueOf(positionAsText)
             val worker = when (position) {
@@ -110,13 +130,14 @@ class Accountant(
                 Position.ASSISTANT -> Assistant(id,name,age)
                 Position.CONSULTANT -> Consultant(id,name,age)
             }
+            worker.salary = salary
             employees.add(worker)
         }
         return employees
     }
 
     private fun saveWorkerToFile(worker: Worker) {
-        fileWorkers.appendText("${worker.id}%${worker.name}%${worker.age}%${worker.position}\n")
+        fileWorkers.appendText("${worker.id}%${worker.name}%${worker.age}%${worker.salary}%${worker.position}\n")
     }
 
 
