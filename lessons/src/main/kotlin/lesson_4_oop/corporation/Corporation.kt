@@ -8,5 +8,4 @@ fun main() {
     if (assistant != null) {
         director?.takeCoffee(assistant)
     }
-
 }
