@@ -15,6 +15,24 @@ object WorkersRepository {
         _workers.add(newWorker)
     }
 
+    fun findAssistant(): Assistant? {
+        for (worker in _workers) {
+            if (worker is Assistant) {
+                return worker
+            }
+        }
+        return null
+    }
+
+    fun findDirector(): Director? {
+        for (worker in _workers) {
+            if (worker is Director) {
+                return worker
+            }
+        }
+        return null
+    }
+
     fun saveChanges() {
         val content = StringBuilder()
         for (worker in _workers) {
