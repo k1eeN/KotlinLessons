@@ -2,7 +2,7 @@ package lesson_4_oop.corporation
 
 import java.io.File
 
-class ProductCardRepository {
+object ProductCardRepository {
 
 
     private val fileProductCard = File("product_cards.txt")
