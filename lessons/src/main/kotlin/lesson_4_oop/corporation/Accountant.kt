@@ -46,8 +46,17 @@ class Accountant(
                 OperationCode.FIRE_EMPLOYEES -> fireAnEmployees()
                 OperationCode.SHOW_ALL_EMPLOYEES -> showAllEmployees()
                 OperationCode.CHANGE_SALARY -> changeSalary()
+                OperationCode.CHANGE_AGE -> changeAge()
             }
         }
+    }
+
+    private fun changeAge() {
+        print("Enter employee's id to change age: ")
+        val id = readln().toInt()
+        print("Enter new age: ")
+        val age = readln().toInt()
+        workersRepository.changeAge(id, age)
     }
 
     private fun changeSalary() {
@@ -88,6 +97,10 @@ class Accountant(
         workersRepository.registerNewEmployees(worker)
     }
 
+    override fun copy(salary: Int, age: Int): Accountant {
+        return Accountant(this.id, this.name, age, salary)
+    }
+
     private fun fireAnEmployees() {
         print("Enter employee's id to fire: ")
         val id = readln().toInt()
@@ -100,7 +113,6 @@ class Accountant(
             employee.printInfo()
         }
     }
-
 
 
     private fun removeProductCard() {
@@ -143,19 +155,19 @@ class Accountant(
             ProductType.FOOD -> {
                 print("Enter the caloric: ")
                 val caloric = readln().toInt()
-                FoodCard(productName,productBrand,productPrice,caloric)
+                FoodCard(productName, productBrand, productPrice, caloric)
             }
 
             ProductType.APPLIANCE -> {
                 print("Enter the wattage: ")
                 val wattage = readln().toInt()
-                ApplianceCard(productName,productBrand,productPrice,wattage)
+                ApplianceCard(productName, productBrand, productPrice, wattage)
             }
 
             ProductType.SHOE -> {
                 print("Enter the size: ")
                 val size = readln().toFloat()
-                ShoeCard(productName,productBrand,productPrice,size)
+                ShoeCard(productName, productBrand, productPrice, size)
 
             }
         }

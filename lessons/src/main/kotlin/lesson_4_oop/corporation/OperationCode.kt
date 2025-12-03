@@ -15,5 +15,7 @@ enum class OperationCode(val title: String) {
 
     SHOW_ALL_EMPLOYEES("Show all employees"),
 
-    CHANGE_SALARY("Change salary")
+    CHANGE_SALARY("Change salary"),
+
+    CHANGE_AGE("Change age")
 }
