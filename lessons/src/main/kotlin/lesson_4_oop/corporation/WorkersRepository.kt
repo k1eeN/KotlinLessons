@@ -11,7 +11,14 @@ object WorkersRepository {
         get() = _workers.toList()
 
 
-    fun registerNewEmployees(worker: Worker) = _workers.add(worker)
+    fun registerNewEmployees(newWorker: Worker) {
+        for (worker in workers) {
+            if (worker == newWorker) {
+                return
+            }
+        }
+        _workers.add(newWorker)
+    }
 
     fun saveChanges() {
         val content = StringBuilder()
