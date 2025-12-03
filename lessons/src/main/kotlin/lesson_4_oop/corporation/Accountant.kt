@@ -1,10 +1,10 @@
 package lesson_4_oop.corporation
 
-class Accountant(
-    id: Int,
-    name: String,
-    age: Int,
-    salary: Int
+data class Accountant(
+    override val id: Int,
+    override val name: String,
+    override val age: Int,
+    override val salary: Int
 ) : Worker(
     id,
     name,

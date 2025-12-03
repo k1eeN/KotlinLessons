@@ -2,11 +2,11 @@ package lesson_4_oop.corporation
 
 import kotlin.random.Random
 
-class Consultant(
-    id: Int,
-    name: String,
-    age: Int = 0,
-    salary: Int
+data class Consultant(
+    override val id: Int,
+    override val name: String,
+    override val age: Int,
+    override val salary: Int
 ) : Worker(
     id,
     name,

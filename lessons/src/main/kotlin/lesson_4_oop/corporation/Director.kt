@@ -1,10 +1,10 @@
 package lesson_4_oop.corporation
 
-class Director(
-    id: Int,
-    name: String,
-    age: Int = 0,
-    salary: Int
+data class Director(
+    override val id: Int,
+    override val name: String,
+    override val age: Int,
+    override val salary: Int
 ) : Worker(
     id,
     name,
