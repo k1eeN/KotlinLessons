@@ -2,30 +2,28 @@ package lesson_25_working_with_data.profile
 
 fun main() {
     val profiles = ProfileRepository.profiles
+        .filter { it.age > 25 }
+        .filter { it.gender == Gender.MALE }
+        .filter { it.firstName.startsWith("A") }
+        .filter { it.age < 30 }
+        .transform { it.copy(age = it.age + 1) }
 
-    var filtered = filter(profiles) { it.age > 25 }
-    filtered = filter(filtered) { it.gender == Gender.MALE }
-    filtered = filter(filtered) { it.firstName.startsWith("A") }
-    filtered = filter(filtered) { it.age < 30 }
-
-    val transformed = transform(filtered) { it.copy(age = it.age + 1) }
-
-    for (person in transformed) {
+    for (person in profiles) {
         println(person)
     }
 }
 
-fun <T> transform(profiles: List<Person>, operation: (Person) -> T): List<T> {
+fun <T> List<Person>.transform(operation: (Person) -> T): List<T> {
     val result = mutableListOf<T>()
-    for (person in profiles) {
+    for (person in this) {
         result.add(operation(person))
     }
     return result
 }
 
-fun filter(profiles: List<Person>, isSuitable: (Person) -> Boolean): List<Person> {
+fun List<Person>.filter(isSuitable: (Person) -> Boolean): List<Person> {
     val result = mutableListOf<Person>()
-    for (person in profiles) {
+    for (person in this) {
         if (isSuitable(person)) {
             result.add(person)
         }
