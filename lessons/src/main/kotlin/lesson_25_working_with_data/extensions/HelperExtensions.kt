@@ -24,8 +24,14 @@ inline fun <T> Iterable<T>.myForEach(operation: (T) -> Unit) {
     }
 }
 
+//Scope
+
 inline fun <T, R> T.myLet(block: (T) -> R): R {
     return block(this)
+}
+
+inline fun <T, R> T.myRun(operation: T.() -> R): R {
+    return operation()
 }
 
 inline fun <T> T.myAlso(block: (T) -> Unit): T {

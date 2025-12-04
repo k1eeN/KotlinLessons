@@ -9,5 +9,5 @@ fun main() {
         .also { println("Convert to String") }
         .map { "${it.id} - ${it.productName} - ${it.productPrice}" }
         .also { println("Print info") }
-        .forEach { println(it) }
+        .forEach(::println)
 }
