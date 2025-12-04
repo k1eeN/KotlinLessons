@@ -17,3 +17,9 @@ inline fun <T> Iterable<T>.filter(isSuitable: (T) -> Boolean): List<T> {
     }
     return result
 }
+
+inline fun <T> Iterable<T>.myForEach(operation: (T) -> Unit) {
+    for (item in this) {
+        operation(item)
+    }
+}
