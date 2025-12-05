@@ -1,13 +1,14 @@
 package lesson_35_design_patterns.users
 
 import kotlinx.serialization.json.Json
+import lesson_35_design_patterns.observer.Observer
 import java.io.File
 
 class UsersRepository private constructor() {
 
     private val file = File("users.json")
 
-    private val observers = mutableListOf<Display>()
+    private val observers = mutableListOf<Observer<List<User>>>()
 
     private val _users: MutableList<User> = loadAllUser()
     val users
@@ -21,7 +22,7 @@ class UsersRepository private constructor() {
         }
     }
 
-    fun registerObserver(observer: Display) {
+    fun registerObserver(observer: Observer<List<User>>) {
         observers.add(observer)
         observer.onChanged(users)
     }

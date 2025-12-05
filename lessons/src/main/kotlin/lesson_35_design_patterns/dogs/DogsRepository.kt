@@ -1,6 +1,7 @@
 package lesson_35_design_patterns.dogs
 
 import kotlinx.serialization.json.Json
+import lesson_35_design_patterns.observer.Observer
 import java.io.File
 
 
@@ -8,7 +9,7 @@ class DogsRepository private constructor() {
 
     private val file = File("dogs.json")
 
-    private val observers = mutableListOf<Display>()
+    private val observers = mutableListOf<Observer<List<Dog>>>()
 
     private val _dogs: MutableList<Dog> = loadAllDog()
     val dogs
@@ -22,7 +23,7 @@ class DogsRepository private constructor() {
         }
     }
 
-    fun registerObserver(observer: Display) {
+    fun registerObserver(observer: Observer<List<Dog>>) {
         observers.add(observer)
         observer.onChanged(dogs)
     }
