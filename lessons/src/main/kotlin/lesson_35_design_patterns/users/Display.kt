@@ -8,7 +8,7 @@ import javax.swing.JFrame
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
 
-class Display{
+class Display {
 
     fun show() {
 
@@ -25,10 +25,8 @@ class Display{
             add(scrollPane)
         }
 
-        UsersRepository.getInstance("qwerty").registerObserver(object : Observer<List<User>> {
-            override fun onChanged(newValue: List<User>) {
-                newValue.joinToString("\n").let { textArea.text = it }
-            }
-        })
+        UsersRepository.getInstance("qwerty").addOnUserChangedListener { users ->
+            users.joinToString("\n").let { textArea.text = it }
+        }
     }
 }
