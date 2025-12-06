@@ -1,6 +1,5 @@
 package lesson_35_design_patterns.users
 
-import lesson_35_design_patterns.observer.Observer
 import java.awt.Dimension
 import java.awt.Font
 import java.awt.Insets
@@ -8,10 +7,9 @@ import javax.swing.JFrame
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
 
-class Display {
+class DisplayOldest {
 
     fun show() {
-
         val textArea = JTextArea().apply {
             isEditable = false
             font = Font(Font.SANS_SERIF, Font.PLAIN, 24)
@@ -25,8 +23,8 @@ class Display {
             add(scrollPane)
         }
 
-        UsersRepository.getInstance("qwerty").users.registerObserver { users ->
-            users.joinToString("\n").let { textArea.text = it }
+        UsersRepository.getInstance("qwerty").oldestUser.registerObserver {
+            textArea.text = "Oldest person is: $it"
         }
     }
 }

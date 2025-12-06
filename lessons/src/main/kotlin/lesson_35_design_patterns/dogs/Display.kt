@@ -25,7 +25,7 @@ class Display {
             add(scrollPane)
         }
 
-        DogsRepository.getInstance("qwerty").addOnDogChangedListener { dogs ->
+        DogsRepository.getInstance("qwerty").dogs.registerObserver { dogs ->
             dogs.joinToString("\n").let { textArea.text = it }
         }
     }
