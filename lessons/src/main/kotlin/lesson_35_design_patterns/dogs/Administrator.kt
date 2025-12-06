@@ -37,12 +37,16 @@ class Administrator {
         val name = readln()
         print("Enter wight: ")
         val wight = readln().toDouble()
-        repository.addDog(breed, name, wight)
+        DogsInvoker.addCommand {
+            repository.addDog(breed, name, wight)
+        }
     }
 
     fun deleteDog() {
         print("Enter id: ")
         val id = readln().toInt()
-        repository.deleteDog(id)
+        DogsInvoker.addCommand {
+            repository.deleteDog(id)
+        }
     }
 }

@@ -7,6 +7,7 @@ import java.io.File
 
 class UsersRepository private constructor() {
 
+
     private val file = File("users.json")
 
     private val userList: MutableList<User> = loadAllUser()
@@ -18,10 +19,9 @@ class UsersRepository private constructor() {
 
     private val _oldestUser = MutableObservable(userList.maxBy { it.age })
     val oldestUser: Observable<User>
-        get() =_oldestUser
+        get() = _oldestUser
 
     private fun loadAllUser(): MutableList<User> = Json.decodeFromString(file.readText().trim())
-
 
     fun addUser(firstName: String, lastName: String, age: Int) {
         val id = userList.maxOf { it.id } + 1
@@ -35,7 +35,7 @@ class UsersRepository private constructor() {
     }
 
     fun deleteUser(id: Int) {
-        userList.removeIf {it.id == id}
+        userList.removeIf { it.id == id }
         _users.currentValue = userList.toList()
 
         val newOldest = userList.maxBy { it.age }
