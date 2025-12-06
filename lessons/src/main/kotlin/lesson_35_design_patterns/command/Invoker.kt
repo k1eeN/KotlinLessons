@@ -1,6 +1,6 @@
 package lesson_35_design_patterns.command
 
-interface Invoker {
+interface Invoker<T : Command> {
 
-    fun addCommand(command: Command)
+    fun addCommand(command: T)
 }
