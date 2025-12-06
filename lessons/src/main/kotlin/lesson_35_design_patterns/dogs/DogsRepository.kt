@@ -2,6 +2,7 @@ package lesson_35_design_patterns.dogs
 
 import kotlinx.serialization.json.Json
 import lesson_35_design_patterns.observer.MutableObservable
+import lesson_35_design_patterns.observer.Observable
 import java.io.File
 
 
@@ -9,28 +10,32 @@ class DogsRepository private constructor() {
 
     private val file = File("dogs.json")
 
-    private val _dogs: MutableList<Dog> = loadAllDog()
-    val dogs = MutableObservable(_dogs.toList())
+    private val dogList: MutableList<Dog> = loadAllDog()
+
+
+    private val _dogs = MutableObservable(dogList.toList())
+    val dogs: Observable<List<Dog>>
+        get() = _dogs
 
     private fun loadAllDog(): MutableList<Dog> = Json.decodeFromString(file.readText().trim())
 
 
 
     fun addDog(breed: String, name: String, wight: Double) {
-        val id = _dogs.maxOf { it.id } + 1
+        val id = dogList.maxOf { it.id } + 1
         val user = Dog(id, breed, name, wight)
-        _dogs.add(user)
+        dogList.add(user)
 
-        dogs.currentValue = _dogs.toList()
+        _dogs.currentValue = dogList.toList()
     }
 
     fun deleteDog(id: Int) {
-        _dogs.removeIf {it.id == id}
-        dogs.currentValue = _dogs.toList()
+        dogList.removeIf {it.id == id}
+        _dogs.currentValue = dogList.toList()
     }
 
     fun saveChanges() {
-        val content = Json.encodeToString(_dogs)
+        val content = Json.encodeToString(dogList)
         file.writeText(content)
     }
 

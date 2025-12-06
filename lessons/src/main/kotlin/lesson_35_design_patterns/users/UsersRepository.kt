@@ -2,43 +2,50 @@ package lesson_35_design_patterns.users
 
 import kotlinx.serialization.json.Json
 import lesson_35_design_patterns.observer.MutableObservable
+import lesson_35_design_patterns.observer.Observable
 import java.io.File
 
 class UsersRepository private constructor() {
 
     private val file = File("users.json")
 
-    private val _users: MutableList<User> = loadAllUser()
+    private val userList: MutableList<User> = loadAllUser()
 
-    val users = MutableObservable(_users.toList())
-    val oldestUser = MutableObservable(_users.maxBy { it.age })
+
+    private val _users = MutableObservable(userList.toList())
+    val users: Observable<List<User>>
+        get() = _users
+
+    private val _oldestUser = MutableObservable(userList.maxBy { it.age })
+    val oldestUser: Observable<User>
+        get() =_oldestUser
 
     private fun loadAllUser(): MutableList<User> = Json.decodeFromString(file.readText().trim())
 
 
     fun addUser(firstName: String, lastName: String, age: Int) {
-        val id = _users.maxOf { it.id } + 1
+        val id = userList.maxOf { it.id } + 1
         val user = User(id, age, firstName, lastName)
-        _users.add(user)
-        users.currentValue = _users.toList()
+        userList.add(user)
+        _users.currentValue = userList.toList()
 
-        if (age > oldestUser.currentValue.age) {
-            oldestUser.currentValue = user
+        if (age > _oldestUser.currentValue.age) {
+            _oldestUser.currentValue = user
         }
     }
 
     fun deleteUser(id: Int) {
-        _users.removeIf {it.id == id}
-        users.currentValue = _users.toList()
+        userList.removeIf {it.id == id}
+        _users.currentValue = userList.toList()
 
-        val newOldest = _users.maxBy { it.age }
-        if (newOldest != oldestUser.currentValue) {
-            oldestUser.currentValue = newOldest
+        val newOldest = userList.maxBy { it.age }
+        if (newOldest != _oldestUser.currentValue) {
+            _oldestUser.currentValue = newOldest
         }
     }
 
     fun saveChanges() {
-        val content = Json.encodeToString(_users)
+        val content = Json.encodeToString(userList)
         file.writeText(content)
     }
 
