@@ -1,8 +1,8 @@
 package lesson_50_collection
 
-class NumbersArrayList : NumberMutableList {
+class NumbersArrayList(initialCapacity: Int = INITIAL_CAPACITY) : NumberMutableList {
 
-    private var numbers = arrayOfNulls<Int>(INITIAL_CAPACITY)
+    private var numbers = arrayOfNulls<Int>(initialCapacity)
 
     override var size: Int = 0
         private set
@@ -16,18 +16,15 @@ class NumbersArrayList : NumberMutableList {
     private fun growIfNeeded() {
         if (numbers.size == size) {
             val newArray = arrayOfNulls<Int>(numbers.size * 2)
-            for (index in numbers.indices) {
-                newArray[index] = numbers[index]
-            }
+            System.arraycopy(numbers, 0, newArray, 0, size)
             numbers = newArray
         }
     }
 
     override fun add(index: Int, number: Int) {
+        checkIndexForAdding(index)
         growIfNeeded()
-        for (i in size downTo index + 1) {
-            numbers[i] = numbers[i - 1]
-        }
+        System.arraycopy(numbers, index, numbers, index + 1, size - index)
         numbers[index] = number
         size++
     }
@@ -41,9 +38,8 @@ class NumbersArrayList : NumberMutableList {
     }
 
     override fun removeAt(index: Int) {
-        for (i in index until size - 1) {
-            numbers[i] = numbers[i + 1]
-        }
+        checkIndex(index)
+        System.arraycopy(numbers, index + 1, numbers, index, size - index - 1)
         size--
         numbers[size] == null
     }
@@ -71,7 +67,20 @@ class NumbersArrayList : NumberMutableList {
         return false
     }
 
+    private fun checkIndex(index: Int) {
+        if (index < 0 || index >= size) {
+            throw IndexOutOfBoundsException("Index $index Size $size")
+        }
+    }
+
+    private fun checkIndexForAdding(index: Int) {
+        if (index < 0 || index > size) {
+            throw IndexOutOfBoundsException("Index $index Size $size")
+        }
+    }
+
     override fun get(index: Int): Int {
+        checkIndex(index)
         return numbers[index]!!
     }
 
