@@ -1,20 +1,12 @@
 package lesson_48_junit
 
-class Calculator {
+interface Calculator {
 
-    fun sum(a: Int, b: Int): Int {
-        return a + b
-    }
+    fun sum(a: Int, b: Int): Int
 
-    fun subtraction(a: Int, b: Int): Int {
-        return a - b
-    }
+    fun subtraction(a: Int, b: Int): Int
 
-    fun multiplication(a: Int, b: Int): Int {
-        return a * b
-    }
+    fun multiplication(a: Int, b: Int): Int
 
-    fun division(a: Int, b: Int): Int {
-        return a / b
-    }
+    fun division(a: Int, b: Int): Double
 }
