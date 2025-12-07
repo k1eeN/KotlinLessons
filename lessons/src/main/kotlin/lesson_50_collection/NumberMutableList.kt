@@ -7,4 +7,6 @@ interface NumberMutableList {
     fun add(number: Int)
 
     fun get(index: Int): Int
+
+    fun removeAt(index: Int)
 }
