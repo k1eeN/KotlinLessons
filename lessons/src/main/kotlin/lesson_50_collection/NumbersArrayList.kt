@@ -2,7 +2,7 @@ package lesson_50_collection
 
 class NumbersArrayList : NumberMutableList {
 
-    private var numbers = arrayOfNulls<Int>(10)
+    private var numbers = arrayOfNulls<Int>(INITIAL_CAPACITY)
 
     override var size: Int = 0
         private set
@@ -32,6 +32,14 @@ class NumbersArrayList : NumberMutableList {
         size++
     }
 
+    override fun plus(number: Int) {
+        add(number)
+    }
+
+    override fun minus(number: Int) {
+        remove(number)
+    }
+
     override fun removeAt(index: Int) {
         for (i in index until size - 1) {
             numbers[i] = numbers[i + 1]
@@ -41,7 +49,7 @@ class NumbersArrayList : NumberMutableList {
     }
 
     override fun clear() {
-        numbers = arrayOfNulls(10)
+        numbers = arrayOfNulls(INITIAL_CAPACITY)
         size = 0
     }
 
@@ -65,5 +73,10 @@ class NumbersArrayList : NumberMutableList {
 
     override fun get(index: Int): Int {
         return numbers[index]!!
+    }
+
+    companion object {
+
+        private const val INITIAL_CAPACITY = 10
     }
 }
