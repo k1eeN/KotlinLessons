@@ -1,14 +1,14 @@
 package lesson_50_collection
 
-interface NumberMutableSet {
+interface NumberMutableSet<T> {
 
     val size: Int
 
-    fun add(number: Int): Boolean
+    fun add(element: T): Boolean
 
-    fun remove(number: Int)
+    fun remove(element: T)
 
     fun clear()
 
-    fun contains(number: Int): Boolean
+    fun contains(element: T): Boolean
 }
