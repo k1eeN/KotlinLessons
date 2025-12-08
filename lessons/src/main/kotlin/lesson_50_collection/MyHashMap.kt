@@ -3,12 +3,15 @@ package lesson_50_collection
 import kotlin.math.abs
 
 class MyHashMap<K, V> : MyMutableMap<K, V> {
+
+    private var modeCount = 0
     private var elements = arrayOfNulls<Node<K, V>>(INITIAL_CAPACITY)
 
     override var size: Int = 0
         private set
 
     override fun put(key: K, value: V): V? {
+        modeCount++
         if (size >= elements.size * LOAD_FACTOR) {
             increaseArray()
         }
@@ -56,7 +59,37 @@ class MyHashMap<K, V> : MyMutableMap<K, V> {
         elements = newArray
     }
 
+    fun keyIterator(): MutableIterator<K> {
+        return object : MutableIterator<K> {
+            private val currentModeCount = modeCount
+
+            private var nodeIndex = 0
+            private var nextNode = elements[nodeIndex]
+            private var nextIndex = 0
+
+            override fun hasNext(): Boolean {
+                return nextIndex < size
+            }
+
+            override fun next(): K {
+                if (currentModeCount != modeCount) throw ConcurrentModificationException()
+                while (nextNode == null) {
+                    nextNode = elements[++nodeIndex]
+                }
+                return nextNode?.key!!.also {
+                    nextIndex++
+                    nextNode = nextNode?.next
+                }
+            }
+
+            override fun remove() {
+                TODO("Not yet implemented")
+            }
+        }
+    }
+
     override fun remove(key: K): V? {
+        modeCount++
         val position = getElementPosition(key, elements.size)
         val existedElement = elements[position] ?: return null
         if (existedElement.key == key) {
@@ -81,6 +114,7 @@ class MyHashMap<K, V> : MyMutableMap<K, V> {
     }
 
     override fun clear() {
+        modeCount++
         elements = arrayOfNulls(INITIAL_CAPACITY)
         size = 0
     }
