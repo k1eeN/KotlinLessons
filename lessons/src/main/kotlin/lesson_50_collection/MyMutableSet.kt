@@ -1,6 +1,6 @@
 package lesson_50_collection
 
-interface NumberMutableSet<T> {
+interface MyMutableSet<T> {
 
     val size: Int
 

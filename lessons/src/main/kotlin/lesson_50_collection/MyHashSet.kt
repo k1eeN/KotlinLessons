@@ -2,7 +2,7 @@ package lesson_50_collection
 
 import kotlin.math.abs
 
-class NumbersHashSet<T> : NumberMutableSet<T> {
+class MyHashSet<T> : MyMutableSet<T> {
 
     private var elements = arrayOfNulls<Node<T>>(INITIAL_CAPACITY)
 

@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.Test
 
-class NumbersHashSetTest {
+class MyHashSetTest {
 
-    private val numbers = NumbersHashSet<Int>()
+    private val numbers = MyHashSet<Int>()
 
     @Test
     fun `When added 100 elements then size 100`() {
