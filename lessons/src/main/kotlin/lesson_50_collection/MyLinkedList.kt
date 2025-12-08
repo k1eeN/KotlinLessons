@@ -2,6 +2,7 @@ package lesson_50_collection
 
 class MyLinkedList<T> : MyMutableList<T> {
 
+    private var modeCount = 0
     private var first: Node<T>? = null
     private var last: Node<T>? = null
 
@@ -9,6 +10,7 @@ class MyLinkedList<T> : MyMutableList<T> {
         private set
 
     override fun add(element: T): Boolean {
+        modeCount++
         val prevLast = last
         last = Node(prevLast, element)
         if (prevLast == null) {
@@ -21,6 +23,7 @@ class MyLinkedList<T> : MyMutableList<T> {
     }
 
     override fun add(index: Int, element: T) {
+        modeCount++
         checkIndexForAdding(index)
         if (index == size) {
             add(element)
@@ -75,6 +78,7 @@ class MyLinkedList<T> : MyMutableList<T> {
     }
 
     override fun removeAt(index: Int) {
+        modeCount++
         checkIndex(index)
         val node = getNode(index)
         unlink(node)
@@ -95,6 +99,7 @@ class MyLinkedList<T> : MyMutableList<T> {
     }
 
     override fun remove(element: T) {
+        modeCount++
         var node = first
         repeat(size) {
             if (node?.item == element) {
@@ -107,6 +112,7 @@ class MyLinkedList<T> : MyMutableList<T> {
     }
 
     override fun clear() {
+        modeCount++
         first = null
         last = null
         size = 0
@@ -139,6 +145,7 @@ class MyLinkedList<T> : MyMutableList<T> {
     override fun iterator(): Iterator<T> {
         return object : Iterator<T> {
 
+            private val currentModeCount = modeCount
             private var nextNode = first
 
             override fun hasNext(): Boolean {
@@ -146,6 +153,7 @@ class MyLinkedList<T> : MyMutableList<T> {
             }
 
             override fun next(): T {
+                if (currentModeCount != modeCount) throw ConcurrentModificationException()
                 return nextNode?.item!!.also {
                     nextNode = nextNode?.next
                 }

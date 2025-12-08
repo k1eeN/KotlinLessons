@@ -5,11 +5,13 @@ import kotlin.math.abs
 class MyHashSet<T> : MyMutableSet<T> {
 
     private var elements = arrayOfNulls<Node<T>>(INITIAL_CAPACITY)
+    private var modeCount = 0
 
     override var size: Int = 0
         private set
 
     override fun add(element: T): Boolean {
+        modeCount++
         if (size >= elements.size * LOAD_FACTOR) {
             increaseArray()
         }
@@ -56,6 +58,7 @@ class MyHashSet<T> : MyMutableSet<T> {
     }
 
     override fun remove(element: T) {
+        modeCount++
         val position = getElementPosition(element, elements.size)
         val existedElement = elements[position] ?: return
         if (existedElement.item == element) {
@@ -78,6 +81,7 @@ class MyHashSet<T> : MyMutableSet<T> {
     }
 
     override fun clear() {
+        modeCount++
         elements = arrayOfNulls(INITIAL_CAPACITY)
         size = 0
     }
@@ -102,6 +106,8 @@ class MyHashSet<T> : MyMutableSet<T> {
     override fun iterator(): Iterator<T> {
         return object : Iterator<T> {
 
+            private val currentModeCount = modeCount
+
             private var nodeIndex = 0
             private var nextNode = elements[nodeIndex]
             private var nextIndex = 0
@@ -111,6 +117,7 @@ class MyHashSet<T> : MyMutableSet<T> {
             }
 
             override fun next(): T {
+                if (currentModeCount != modeCount) throw ConcurrentModificationException()
                 while (nextNode == null) {
                     nextNode = elements[++nodeIndex]
                 }
