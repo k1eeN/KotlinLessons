@@ -1,6 +1,6 @@
 package lesson_50_collection
 
-class MyArrayList<T>(initialCapacity: Int = INITIAL_CAPACITY) : MyMutableList<T> {
+class MyArrayList<T>(initialCapacity: Int = INITIAL_CAPACITY) : MyMutableList<T>, MyCollection<T> {
 
     private var elements = arrayOfNulls<Any>(initialCapacity)
     private var modeCount = 0

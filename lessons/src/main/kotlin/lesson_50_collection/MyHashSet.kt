@@ -2,7 +2,7 @@ package lesson_50_collection
 
 import kotlin.math.abs
 
-class MyHashSet<T> : MyMutableSet<T> {
+class MyHashSet<T> : MyMutableSet<T>, MySet<T> {
 
     private var elements = arrayOfNulls<Node<T>>(INITIAL_CAPACITY)
     private var modeCount = 0
