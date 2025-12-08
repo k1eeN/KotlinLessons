@@ -56,15 +56,43 @@ class NumbersHashSet : NumberMutableSet {
     }
 
     override fun remove(number: Int) {
-        TODO("Not yet implemented")
+        val position = getElementPosition(number, elements.size)
+        val existedElement = elements[position] ?: return
+        if (existedElement.item == number) {
+            elements[position] = existedElement.next
+            size--
+            return
+        }
+
+        var before: Node? = existedElement
+        while (before?.next != null) {
+            val removingElement = before.next
+            if (removingElement?.item == number) {
+                before.next = removingElement.next
+                size--
+                return
+            } else {
+                before = before.next
+            }
+        }
     }
 
     override fun clear() {
-        TODO("Not yet implemented")
+        elements = arrayOfNulls(INITIAL_CAPACITY)
+        size = 0
     }
 
     override fun contains(number: Int): Boolean {
-        TODO("Not yet implemented")
+        val position = getElementPosition(number, elements.size)
+        var existedElement = elements[position]
+        while (existedElement != null) {
+            if (existedElement.item == number) {
+                return true
+            } else {
+                existedElement = existedElement.next
+            }
+        }
+        return false
     }
 
     private fun getElementPosition(number: Int, arraySize: Int): Int {
