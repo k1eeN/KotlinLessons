@@ -7,10 +7,11 @@ class MyArrayList<T>(initialCapacity: Int = INITIAL_CAPACITY) : MyMutableList<T>
     override var size: Int = 0
         private set
 
-    override fun add(element: T) {
+    override fun add(element: T): Boolean {
         growIfNeeded()
         elements[size] = element
         size++
+        return true
     }
 
     private fun growIfNeeded() {
@@ -82,6 +83,21 @@ class MyArrayList<T>(initialCapacity: Int = INITIAL_CAPACITY) : MyMutableList<T>
     override fun get(index: Int): T {
         checkIndex(index)
         return elements[index] as T
+    }
+
+    override fun iterator(): Iterator<T> {
+        return object : Iterator<T> {
+
+            private var nextIndex = 0
+
+            override fun hasNext(): Boolean {
+                return nextIndex < size
+            }
+
+            override fun next(): T {
+                return elements[nextIndex++] as T
+            }
+        }
     }
 
     companion object {

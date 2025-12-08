@@ -8,7 +8,7 @@ class MyLinkedList<T> : MyMutableList<T> {
     override var size: Int = 0
         private set
 
-    override fun add(element: T) {
+    override fun add(element: T): Boolean {
         val prevLast = last
         last = Node(prevLast, element)
         if (prevLast == null) {
@@ -17,6 +17,7 @@ class MyLinkedList<T> : MyMutableList<T> {
             prevLast.next = last
         }
         size++
+        return true
     }
 
     override fun add(index: Int, element: T) {
@@ -132,6 +133,23 @@ class MyLinkedList<T> : MyMutableList<T> {
     private fun checkIndexForAdding(index: Int) {
         if (index < 0 || index > size) {
             throw IndexOutOfBoundsException("Index $index Size $size")
+        }
+    }
+
+    override fun iterator(): Iterator<T> {
+        return object : Iterator<T> {
+
+            private var nextNode = first
+
+            override fun hasNext(): Boolean {
+                return nextNode != null
+            }
+
+            override fun next(): T {
+                return nextNode?.item!!.also {
+                    nextNode = nextNode?.next
+                }
+            }
         }
     }
 

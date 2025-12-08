@@ -1,10 +1,10 @@
 package lesson_50_collection
 
-interface MyMutableList<T> {
+interface MyMutableList<T> : MyMutableCollection<T> {
 
-    val size: Int
+    override val size: Int
 
-    fun add(element: T)
+    override fun add(element: T): Boolean
 
     fun add(index: Int, element: T)
 
@@ -16,9 +16,9 @@ interface MyMutableList<T> {
 
     fun removeAt(index: Int)
 
-    fun remove(element: T)
+    override fun remove(element: T)
 
-    fun clear()
+    override fun clear()
 
-    fun contains(element: T): Boolean
+    override fun contains(element: T): Boolean
 }
