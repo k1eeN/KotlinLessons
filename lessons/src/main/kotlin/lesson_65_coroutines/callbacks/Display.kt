@@ -11,6 +11,7 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
+import kotlin.concurrent.thread
 
 object Display {
 
@@ -23,12 +24,14 @@ object Display {
         addActionListener {
             isEnabled = false
             infoArea.text = "Идет загрузка информации о книге...\n"
-            val book = loadBook()
-            infoArea.append("Книга: ${book.title}\nГод: ${book.year}\nЖанр: ${book.genre}\n")
-            infoArea.append("Идет загрузка информации о авторе...\n")
-            val author = loadAuthor(book)
-            infoArea.append("Автор: ${author.name}\nБиография: ${author.bio}\n")
-            isEnabled = true
+            loadBook { book ->
+                infoArea.append("Книга: ${book.title}\nГод: ${book.year}\nЖанр: ${book.genre}\n")
+                infoArea.append("Идет загрузка информации о авторе...\n")
+                loadAuthor(book) { author ->
+                    infoArea.append("Автор: ${author.name}\nБиография: ${author.bio}\n")
+                    isEnabled = true
+                }
+            }
         }
     }
     private val timerLabel = JLabel("Время: 00:00").apply {
@@ -52,25 +55,31 @@ object Display {
         startTimer()
     }
 
-    private fun loadBook(): Book {
-        Thread.sleep(3000)
-        return Book("Властелин колец", 1954, "Эпический роман в жанре эпического фэнтези")
+    private fun loadBook(callback: (Book) -> Unit) {
+        thread {
+            Thread.sleep(3000)
+            callback(Book("Властелин колец", 1954, "Эпический роман в жанре эпического фэнтези"))
+        }
     }
 
-    private fun loadAuthor(book: Book): Author {
-        Thread.sleep(3000)
-        return Author("Джон Р.Р. Толкин", "Английский писатель, филолог, лингвист")
+    private fun loadAuthor(book: Book, callback: (Author) -> Unit) {
+        thread {
+            Thread.sleep(3000)
+            callback(Author("Джон Р.Р. Толкин", "Английский писатель, филолог, лингвист"))
+        }
     }
 
     @Suppress("DefaultLocale")
     private fun startTimer() {
-        var totalSeconds = 0
-        while (true) {
-            val minutes = totalSeconds / 60
-            val seconds = totalSeconds % 60
-            timerLabel.text = String.format("Время: %02d:%02d", minutes, seconds)
-            Thread.sleep(1000)
-            totalSeconds++
+        thread {
+            var totalSeconds = 0
+            while (true) {
+                val minutes = totalSeconds / 60
+                val seconds = totalSeconds % 60
+                timerLabel.text = String.format("Время: %02d:%02d", minutes, seconds)
+                Thread.sleep(1000)
+                totalSeconds++
+            }
         }
     }
 
