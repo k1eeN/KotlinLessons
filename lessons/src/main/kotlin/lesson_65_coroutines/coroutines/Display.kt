@@ -1,6 +1,8 @@
 package lesson_65_coroutines.coroutines
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import lesson_65_coroutines.entities.Author
@@ -8,15 +10,20 @@ import lesson_65_coroutines.entities.Book
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Font
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 import javax.swing.JButton
 import javax.swing.JFrame
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
+import javax.swing.WindowConstants.EXIT_ON_CLOSE
 import kotlin.concurrent.thread
 
 object Display {
+
+    private val scope = CoroutineScope(CoroutineName("My coroutine"))
 
     private val infoArea = JTextArea().apply {
         isEditable = false
@@ -26,7 +33,7 @@ object Display {
         font = Font(Font.SANS_SERIF, Font.PLAIN, 15)
 
         addActionListener {
-            GlobalScope.launch {
+            scope.launch {
                 isEnabled = false
                 infoArea.text = "Идет загрузка информации о книге...\n"
                 val book = loadBook()
@@ -48,10 +55,16 @@ object Display {
 
 
     private val mainFrame = JFrame("Книги и авторы").apply {
+        defaultCloseOperation = EXIT_ON_CLOSE
         layout = BorderLayout()
         add(topPanel, BorderLayout.NORTH)
         add(JScrollPane(infoArea), BorderLayout.CENTER)
         size = Dimension(600, 600)
+        addWindowListener(object : WindowAdapter() {
+            override fun windowClosing(p0: WindowEvent?) {
+                scope.cancel()
+            }
+        })
     }
 
     fun show() {
