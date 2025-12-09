@@ -1,7 +1,10 @@
 package lesson_65_coroutines.callbacks
 
+import lesson_65_coroutines.entities.Author
+import lesson_65_coroutines.entities.Book
 import java.awt.BorderLayout
 import java.awt.Dimension
+import java.awt.Font
 import javax.swing.JButton
 import javax.swing.JFrame
 import javax.swing.JLabel
@@ -13,17 +16,31 @@ object Display {
 
     private val infoArea = JTextArea().apply {
         isEditable = false
+        font = Font(Font.SANS_SERIF, Font.BOLD, 18)
     }
-
-    private val loadButton = JButton("Load Book")
-    private val TimerLabel = JLabel("Time: 00:00")
+    private val loadButton = JButton("Загрузить книгу").apply {
+        font = Font(Font.SANS_SERIF, Font.PLAIN, 15)
+        addActionListener {
+            isEnabled = false
+            infoArea.text = "Идет загрузка информации о книге...\n"
+            val book = loadBook()
+            infoArea.append("Книга: ${book.title}\nГод: ${book.year}\nЖанр: ${book.genre}\n")
+            infoArea.append("Идет загрузка информации о авторе...\n")
+            val author = loadAuthor(book)
+            infoArea.append("Автор: ${author.name}\nБиография: ${author.bio}\n")
+            isEnabled = true
+        }
+    }
+    private val timerLabel = JLabel("Время: 00:00").apply {
+        font = Font(Font.SANS_SERIF, Font.BOLD, 15)
+    }
     private val topPanel = JPanel(BorderLayout()).apply {
-        add(TimerLabel, BorderLayout.WEST)
+        add(timerLabel, BorderLayout.WEST)
         add(loadButton, BorderLayout.EAST)
     }
 
 
-    private val mainFrame = JFrame("Book and Author info").apply {
+    private val mainFrame = JFrame("Книги и авторы").apply {
         layout = BorderLayout()
         add(topPanel, BorderLayout.NORTH)
         add(JScrollPane(infoArea), BorderLayout.CENTER)
@@ -32,5 +49,29 @@ object Display {
 
     fun show() {
         mainFrame.isVisible = true
+        startTimer()
     }
+
+    private fun loadBook(): Book {
+        Thread.sleep(3000)
+        return Book("Властелин колец", 1954, "Эпический роман в жанре эпического фэнтези")
+    }
+
+    private fun loadAuthor(book: Book): Author {
+        Thread.sleep(3000)
+        return Author("Джон Р.Р. Толкин", "Английский писатель, филолог, лингвист")
+    }
+
+    @Suppress("DefaultLocale")
+    private fun startTimer() {
+        var totalSeconds = 0
+        while (true) {
+            val minutes = totalSeconds / 60
+            val seconds = totalSeconds % 60
+            timerLabel.text = String.format("Время: %02d:%02d", minutes, seconds)
+            Thread.sleep(1000)
+            totalSeconds++
+        }
+    }
+
 }
