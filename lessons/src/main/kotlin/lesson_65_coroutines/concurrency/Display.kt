@@ -2,12 +2,13 @@ package lesson_65_coroutines.concurrency
 
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import lesson_65_coroutines.entities.Book
@@ -40,15 +41,18 @@ object Display {
             isEnabled = false
             infoArea.text = "Идет загрузка информации о книге...\n"
 
-            val jobs = mutableListOf<Job>()
+
+            val jobs = mutableListOf<Deferred<Book>>()
             repeat(10) { it ->
-                scope.launch {
+                scope.async {
                     val book = loadBook()
                     infoArea.append("Книга $it: ${book.title}\nГод: ${book.year}\nЖанр: ${book.genre}\n\n")
+                    book
                 }.also { jobs.add(it) }
             }
             scope.launch {
-                jobs.joinAll()
+                val books = jobs.awaitAll()
+                println(books.joinToString(", "))
                 isEnabled = true
             }
 
@@ -111,3 +115,4 @@ object Display {
     }
 
 }
+
