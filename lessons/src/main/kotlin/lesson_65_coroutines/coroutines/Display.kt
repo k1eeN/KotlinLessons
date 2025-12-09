@@ -2,9 +2,10 @@ package lesson_65_coroutines.coroutines
 
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import lesson_65_coroutines.entities.Author
 import lesson_65_coroutines.entities.Book
 import java.awt.BorderLayout
@@ -72,13 +73,25 @@ object Display {
         startTimer()
     }
 
+    private fun longOperation() {
+        mutableListOf<Int>().apply {
+            repeat(300_00) {
+                add(0, it)
+            }
+        }
+    }
+
     private suspend fun loadBook(): Book {
-        delay(3000)
+        withContext(Dispatchers.Default) {
+            longOperation()
+        }
         return Book("Властелин колец", 1954, "Эпический роман в жанре эпического фэнтези")
     }
 
     private suspend fun loadAuthor(book: Book): Author {
-        delay(3000)
+        withContext(Dispatchers.Default) {
+            longOperation()
+        }
         return Author("Джон Р.Р. Толкин", "Английский писатель, филолог, лингвист")
     }
 
