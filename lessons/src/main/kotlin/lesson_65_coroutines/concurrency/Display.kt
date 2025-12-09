@@ -1,29 +1,33 @@
-package lesson_65_coroutines.coroutines
+package lesson_65_coroutines.concurrency
 
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import lesson_65_coroutines.entities.Author
 import lesson_65_coroutines.entities.Book
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Font
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
+import java.util.concurrent.Executors
 import javax.swing.JButton
 import javax.swing.JFrame
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
-import kotlin.concurrent.thread
 
 object Display {
 
-    private val scope = CoroutineScope(CoroutineName("My coroutine") + Dispatchers.Default)
+    private val dispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+    private val scope = CoroutineScope(CoroutineName("My coroutine") + dispatcher)
 
     private val infoArea = JTextArea().apply {
         isEditable = false
@@ -33,16 +37,21 @@ object Display {
         font = Font(Font.SANS_SERIF, Font.PLAIN, 15)
 
         addActionListener {
+            isEnabled = false
+            infoArea.text = "Идет загрузка информации о книге...\n"
+
+            val jobs = mutableListOf<Job>()
+            repeat(10) { it ->
+                scope.launch {
+                    val book = loadBook()
+                    infoArea.append("Книга $it: ${book.title}\nГод: ${book.year}\nЖанр: ${book.genre}\n\n")
+                }.also { jobs.add(it) }
+            }
             scope.launch {
-                isEnabled = false
-                infoArea.text = "Идет загрузка информации о книге...\n"
-                val book = loadBook()
-                infoArea.append("Книга: ${book.title}\nГод: ${book.year}\nЖанр: ${book.genre}\n")
-                infoArea.append("Идет загрузка информации о авторе...\n")
-                val author = loadAuthor(book)
-                infoArea.append("Автор: ${author.name}\nБиография: ${author.bio}\n")
+                jobs.joinAll()
                 isEnabled = true
             }
+
         }
     }
     private val timerLabel = JLabel("Время: 00:00").apply {
@@ -86,22 +95,16 @@ object Display {
         return Book("Властелин колец", 1954, "Эпический роман в жанре эпического фэнтези")
     }
 
-    private suspend fun loadAuthor(book: Book): Author {
-        withContext(Dispatchers.Default) {
-            longOperation()
-        }
-        return Author("Джон Р.Р. Толкин", "Английский писатель, филолог, лингвист")
-    }
 
     @Suppress("DefaultLocale")
     private fun startTimer() {
-        thread {
+        scope.launch {
             var totalSeconds = 0
             while (true) {
                 val minutes = totalSeconds / 60
                 val seconds = totalSeconds % 60
                 timerLabel.text = String.format("Время: %02d:%02d", minutes, seconds)
-                Thread.sleep(1000)
+                delay(1000)
                 totalSeconds++
             }
         }
