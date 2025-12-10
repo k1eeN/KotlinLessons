@@ -1,14 +1,10 @@
 package lesson_83_dictionary
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.net.HttpURLConnection
 import java.net.URI
-import java.util.concurrent.Executors
 
 object Repository {
 
@@ -18,7 +14,7 @@ object Repository {
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    suspend fun loadDefinition(word: String): String {
+    suspend fun loadDefinition(word: String): List<String> {
         return withContext(Dispatchers.IO) {
             var connection: HttpURLConnection? = null
             try {
@@ -29,9 +25,9 @@ object Repository {
                 }
 
                 val response = connection.inputStream.bufferedReader().readText()
-                json.decodeFromString<Definition>(response).definition
+                json.decodeFromString<Definition>(response).mapDefinitionToList()
             } catch (e: Exception) {
-                ""
+                listOf()
             } finally {
                 connection?.disconnect()
             }
@@ -39,18 +35,7 @@ object Repository {
     }
 }
 
-private val dispatcher = Executors.newCachedThreadPool().asCoroutineDispatcher()
-private val scope = CoroutineScope(dispatcher)
 
-fun main() {
-
-    scope.launch {
-        while (true) {
-            print("Enter word: ")
-            val word = readln()
-            val definition = Repository.loadDefinition(word)
-            println(definition)
-        }
-    }
-
+private fun Definition.mapDefinitionToList(): List<String> {
+    return this.definition.split(Regex("\\d. ")).map { it.trim() }.filter { it.isNotEmpty() }
 }
