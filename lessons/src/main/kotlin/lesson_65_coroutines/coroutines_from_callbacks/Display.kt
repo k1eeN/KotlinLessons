@@ -1,0 +1,112 @@
+package lesson_65_coroutines.coroutines_from_callbacks
+
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import lesson_65_coroutines.entities.Author
+import lesson_65_coroutines.entities.Book
+import java.awt.BorderLayout
+import java.awt.Dimension
+import java.awt.Font
+import javax.swing.JButton
+import javax.swing.JFrame
+import javax.swing.JLabel
+import javax.swing.JPanel
+import javax.swing.JScrollPane
+import javax.swing.JTextArea
+import kotlin.concurrent.thread
+import kotlin.coroutines.suspendCoroutine
+
+object Display {
+
+    private val scope = CoroutineScope(Dispatchers.Default)
+
+    private val infoArea = JTextArea().apply {
+        isEditable = false
+        font = Font(Font.SANS_SERIF, Font.BOLD, 18)
+    }
+    private val loadButton = JButton("Загрузить книгу").apply {
+        font = Font(Font.SANS_SERIF, Font.PLAIN, 15)
+        addActionListener {
+
+            scope.launch {
+                isEnabled = false
+                infoArea.text = "Идет загрузка информации о книге...\n"
+                val book = loadBook()
+                infoArea.append("Книга: ${book.title}\nГод: ${book.year}\nЖанр: ${book.genre}\n")
+                infoArea.append("Идет загрузка информации о авторе...\n")
+                val author = loadAuthor(book)
+                infoArea.append("Автор: ${author.name}\nБиография: ${author.bio}\n")
+                isEnabled = true
+            }
+
+        }
+    }
+
+    private val timerLabel = JLabel("Время: 00:00").apply {
+        font = Font(Font.SANS_SERIF, Font.BOLD, 15)
+    }
+    private val topPanel = JPanel(BorderLayout()).apply {
+        add(timerLabel, BorderLayout.WEST)
+        add(loadButton, BorderLayout.EAST)
+    }
+
+
+    private val mainFrame = JFrame("Книги и авторы").apply {
+        layout = BorderLayout()
+        add(topPanel, BorderLayout.NORTH)
+        add(JScrollPane(infoArea), BorderLayout.CENTER)
+        size = Dimension(600, 600)
+    }
+
+    fun show() {
+        mainFrame.isVisible = true
+        startTimer()
+    }
+
+
+    private suspend fun loadBook(): Book {
+        return suspendCoroutine { continuation ->
+            loadBook { book ->
+                continuation.resumeWith(Result.success(book))
+            }
+        }
+    }
+
+    private suspend fun loadAuthor(book: Book): Author {
+        return suspendCoroutine { continuation ->
+            loadAuthor(book) { author ->
+                continuation.resumeWith(Result.success(author))
+            }
+        }
+    }
+
+    private fun loadBook(callback: (Book) -> Unit) {
+        thread {
+            Thread.sleep(3000)
+            callback(Book("Властелин колец", 1954, "Эпический роман в жанре эпического фэнтези"))
+        }
+    }
+
+    private fun loadAuthor(book: Book, callback: (Author) -> Unit) {
+        thread {
+            Thread.sleep(3000)
+            callback(Author("Джон Р.Р. Толкин", "Английский писатель, филолог, лингвист"))
+        }
+    }
+
+    @Suppress("DefaultLocale")
+    private fun startTimer() {
+        thread {
+            var totalSeconds = 0
+            while (true) {
+                val minutes = totalSeconds / 60
+                val seconds = totalSeconds % 60
+                timerLabel.text = String.format("Время: %02d:%02d", minutes, seconds)
+                Thread.sleep(1000)
+                totalSeconds++
+            }
+        }
+    }
+
+}
