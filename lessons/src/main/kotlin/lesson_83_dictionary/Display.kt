@@ -2,12 +2,15 @@ package lesson_83_dictionary
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import java.awt.BorderLayout
 import java.awt.Font
 import java.awt.event.KeyAdapter
@@ -20,12 +23,12 @@ import javax.swing.JScrollPane
 import javax.swing.JTextArea
 import javax.swing.JTextField
 
+@OptIn(FlowPreview::class)
 object Display {
 
-    private lateinit var queries: Flow<String>
+    private val queries = Channel<String>()
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val repository = Repository
-    private var loadingJob: Job? = null
 
     private val enterWordLabel = JLabel("Enter word: ").apply {
         font = Font(Font.SANS_SERIF, Font.PLAIN, 17)
@@ -62,7 +65,9 @@ object Display {
     }
 
     private fun loadDefinition() {
-
+        scope.launch {
+            queries.send(searchField.text.trim())
+        }
     }
 
 
@@ -71,17 +76,19 @@ object Display {
     }
 
     init {
-        queries.onEach {
-            searchButton.isEnabled = false
-            resultArea.text = "Loading..."
-        }.map {
-            repository.loadDefinition(it)
-        }.map {
-            it.joinToString("\n\n").ifEmpty { "Not found" }
-        }.onEach {
-            resultArea.text = it
-            searchButton.isEnabled = true
-        }.launchIn(scope)
+        queries.consumeAsFlow()
+            .onEach {
+                searchButton.isEnabled = false
+                resultArea.text = "Loading..."
+            }.debounce(500)
+            .map {
+                repository.loadDefinition(it)
+            }.map {
+                it.joinToString("\n\n").ifEmpty { "Not found" }
+            }.onEach {
+                resultArea.text = it
+                searchButton.isEnabled = true
+            }.launchIn(scope)
     }
 }
 
