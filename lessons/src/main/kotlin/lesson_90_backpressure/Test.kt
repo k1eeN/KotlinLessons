@@ -1,4 +1,4 @@
-package lessson_90_backpressure
+package lesson_90_backpressure
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
