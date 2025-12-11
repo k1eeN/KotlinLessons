@@ -1,4 +1,4 @@
-package lesson_92_mutable_state_flow
+package lesson_93_channels.dictionary
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

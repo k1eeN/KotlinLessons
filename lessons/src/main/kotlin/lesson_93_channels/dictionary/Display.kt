@@ -1,16 +1,16 @@
-package lesson_92_mutable_state_flow
+package lesson_93_channels.dictionary
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
 import java.awt.BorderLayout
 import java.awt.Font
@@ -24,10 +24,11 @@ import javax.swing.JScrollPane
 import javax.swing.JTextArea
 import javax.swing.JTextField
 
+
 @OptIn(FlowPreview::class)
 object Display {
 
-    private val queries = Channel<String>()
+    private val queries = MutableSharedFlow<String>()
     private val state = MutableStateFlow<ScreenState>(ScreenState.Initial)
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val repository = Repository
@@ -68,7 +69,7 @@ object Display {
 
     private fun loadDefinition() {
         scope.launch {
-            queries.send(searchField.text.trim())
+            queries.emit(searchField.text.trim())
         }
     }
 
@@ -78,10 +79,9 @@ object Display {
     }
 
     init {
-        queries.receiveAsFlow()
-            .onEach {
-                state.emit(ScreenState.Loading)
-            }.debounce(500)
+        queries.onEach {
+            state.emit(ScreenState.Loading)
+        }.debounce(500)
             .map {
                 if (it.isEmpty()) {
                     state.emit(ScreenState.Initial)
@@ -93,6 +93,10 @@ object Display {
                         state.emit(ScreenState.DefinitionsLoaded(result))
                     }
                 }
+            }.retry {
+                println(it)
+                state.emit(ScreenState.Error)
+                true
             }.launchIn(scope)
 
         state.onEach {
@@ -118,9 +122,12 @@ object Display {
                     searchButton.isEnabled = true
                 }
 
+                ScreenState.Error -> {
+                    resultArea.text = "Something went wrong"
+                    searchButton.isEnabled = true
+                }
             }
-        }
-            .launchIn(scope)
+        }.launchIn(scope)
     }
 }
 
